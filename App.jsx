@@ -16,29 +16,61 @@ const App = () => {
   const [computerChoise, setComputerChoise] = useState(null);
   const [result, setResult] = useState(null);
 
+  const handleUserChoice = userChoice => {
+    setUserChoise(userChoice);
+    randomComputerChoice(userChoice);
+  };
 
-  const handleGame =(oneOfThree)=>{
+  const randomComputerChoice = userChoice => {
+    const randomIndex = Math.floor(Math.random() * choises.length);
+    const computerChoice = choises[randomIndex];
+    setComputerChoise(computerChoice);
+    determineWinner(userChoice, computerChoice);
+    // console.log('Computer Choice:', computerChoice);
+    // console.log('User Choice:', userChoice);
+  };
 
-    
-
-  }
-
-
+  const determineWinner = (user, computer) => {
+    if (user.name === computer.name) {
+      setResult('DRAW!!');
+    } else if (
+      (user?.name === 'Taş' && computer?.name === 'Makas') ||
+      (user?.name === 'Kağıt' && computer?.name === 'Taş') ||
+      (user?.name === 'Makas' && computer?.name === 'Kağıt')
+    ) {
+      setResult('WIN!!');
+    } else {
+      setResult('LOST!!');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle={'light-content'} />
       <View style={styles.container}>
         <Text style={styles.title}>ROCK PAPER SCISSORS</Text>
-        <Text style={styles.usersChoise}>User's Choise</Text>
+        <Text style={styles.usersChoise}>User's Choise:</Text>
         <View style={styles.choises}>
           {choises?.map(choise => (
-            <TouchableOpacity style={styles.button} onPress={handleGame(choise)}>
+            <TouchableOpacity
+              key={choise.id}
+              style={
+                choise?.name === userChoise?.name
+                  ? [styles.button, styles.active]
+                  : styles.button
+              }
+              onPress={() => handleUserChoice(choise)}>
               <Image source={choise.image} style={styles.image} />
             </TouchableOpacity>
           ))}
         </View>
-        <Text style={styles.title}>KAZANDIN!!!</Text>
+        <Text style={styles.title}>{result}</Text>
+        <Text style={styles.usersChoise}>Computer's Choise:</Text>
+        {computerChoise && (
+          <View style={styles.button}>
+            <Image style={styles.image} source={computerChoise.image} />
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -65,27 +97,32 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   choises: {
-
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 10,
   },
-  button:{
+  button: {
     width: 90,
     height: 90,
-    alignItems:'center',
-    justifyContent:'center',
-    margin:3,
-    padding:10,
-    backgroundColor:'white',
-    borderRadius:10
-    
-
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: 3,
+    padding: 10,
+    backgroundColor: 'white',
+    borderRadius: 10,
   },
   image: {
     width: '100%',
     height: '100%',
 
     margin: 5,
+  },
+  computerImage: {
+    width: 90,
+    height: 90,
+  },
+  active: {
+    borderWidth: 4,
+    borderColor: 'red',
   },
 });
